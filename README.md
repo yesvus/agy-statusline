@@ -16,10 +16,10 @@ An ultra-fast, zero-overhead custom statusline binary for [Google Antigravity](h
 
 Measured on Linux (x86_64, 50 iterations):
 
-| Implementation | Mean Latency | Min | Max | Subprocesses | CPU Usage |
-|---|---|---|---|---|---|
-| Python script | 28.70 ms | 18.01 ms | 97.71 ms | 1 (`python3`) | Moderate |
-| **Rust binary** | **0.46 ms** | **0.40 ms** | **0.70 ms** | **0 (native)** | **~0%** |
+| Implementation | Mean Latency | Min | Max | Subprocesses |
+|---|---|---|---|---|
+| Python script | 28.70 ms | 18.01 ms | 97.71 ms | 1 (`python3`) |
+| **Rust binary** | **0.46 ms** | **0.40 ms** | **0.70 ms** | **0 (native)** |
 
 **Result:** ~63x faster execution, sub-millisecond response time, and zero CPU spikes during rapid terminal refreshes.
 
