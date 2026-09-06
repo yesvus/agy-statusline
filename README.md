@@ -9,11 +9,11 @@ Gemini 3.8 Flash (High) · lumen · ctx 12% (150k/1M)
 
 ## Highlights
 
-- **⚡ Sub-Millisecond Execution (~1 ms):** Replaces heavy Python/Bash statusline scripts, eliminating CPU spikes during rapid terminal refreshes.
-- **🎯 Project-Specific Context:** Reads workspace directory, active model, and conversation context window usage directly from the active session payload. No cross-project collision or context leakage between terminals.
-- **🔄 Account-Wide Quota Sync:** Synchronizes 5-hour and Weekly Gemini/3P quota across all running `agy` sessions via `/dev/shm` IPC with safe file-locking (`flock`). When any project consumes tokens or receives quota updates, all active terminals reflect the true account state.
-- **⏱️ Live Reset Countdowns:** Automatically computes real-time countdowns to quota resets (`XhYm`, `XdYh`).
-- **🎨 ANSI Colored Output:** Intuitive green/yellow/red color thresholds for both token consumption and remaining quota.
+- **Sub-Millisecond Execution (~1 ms):** Replaces heavy Python/Bash statusline scripts, eliminating CPU spikes during rapid terminal refreshes.
+- **Project-Specific Context:** Reads workspace directory, active model, and conversation context window usage directly from the active session payload. No cross-project collision or context leakage between terminals.
+- **Account-Wide Quota Sync:** Synchronizes 5-hour and Weekly Gemini/3P quota across all running `agy` sessions via `/dev/shm` IPC with safe file-locking (`flock`). When any project consumes tokens or receives quota updates, all active terminals reflect the true account state.
+- **Live Reset Countdowns:** Automatically computes real-time countdowns to quota resets (`XhYm`, `XdYh`).
+- **ANSI Colored Output:** Intuitive green/yellow/red color thresholds for both token consumption and remaining quota.
 
 ## Installation
 
