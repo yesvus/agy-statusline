@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::io::{self, Read, Write};
 use std::os::unix::io::AsRawFd;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 const RESET: &str = "\x1b[0m";
 const BOLD: &str = "\x1b[1m";
@@ -107,6 +107,55 @@ fn parse_iso(s: &str) -> Option<DateTime<Utc>> {
     DateTime::parse_from_rfc3339(s)
         .map(|dt| dt.with_timezone(&Utc))
         .ok()
+}
+
+fn get_git_branch(mut dir: &Path) -> Option<String> {
+    loop {
+        let git_entry = dir.join(".git");
+        if git_entry.is_dir() {
+            let head_file = git_entry.join("HEAD");
+            return parse_git_head(&head_file);
+        } else if git_entry.is_file() {
+            if let Ok(content) = std::fs::read_to_string(&git_entry) {
+                if let Some(line) = content.lines().next() {
+                    if let Some(rel_or_abs) = line.strip_prefix("gitdir:") {
+                        let gitdir = rel_or_abs.trim();
+                        let target: PathBuf = if Path::new(gitdir).is_absolute() {
+                            gitdir.into()
+                        } else {
+                            dir.join(gitdir)
+                        };
+                        return parse_git_head(&target.join("HEAD"));
+                    }
+                }
+            }
+            return None;
+        }
+
+        match dir.parent() {
+            Some(parent) => dir = parent,
+            None => break,
+        }
+    }
+    None
+}
+
+fn parse_git_head(head_path: &Path) -> Option<String> {
+    let content = std::fs::read_to_string(head_path).ok()?;
+    let line = content.lines().next()?.trim();
+    if let Some(branch) = line.strip_prefix("ref: refs/heads/") {
+        let mut b = branch.to_string();
+        if b.chars().count() > 20 {
+            let truncated: String = b.chars().take(19).collect();
+            b = format!("{truncated}…");
+        }
+        Some(b)
+    } else if line.len() >= 7 {
+        let short_sha: String = line.chars().take(7).collect();
+        Some(short_sha)
+    } else {
+        None
+    }
 }
 
 fn sync_and_get_quota(incoming_quota: Option<HashMap<String, QuotaItem>>) -> HashMap<String, QuotaItem> {
@@ -259,6 +308,13 @@ fn main() {
         String::new()
     };
 
+    // Git branch (in-process resolution)
+    let branch = if !cwd.is_empty() {
+        get_git_branch(Path::new(cwd))
+    } else {
+        None
+    };
+
     // 3. Context window (Project specific)
     let cw = data.context_window.as_ref();
     let pct = cw.and_then(|c| c.used_percentage).or_else(|| {
@@ -345,7 +401,11 @@ fn main() {
     let sep = format!(" {DIM}·{RESET} ");
     let mut row1_parts = vec![format!("{CYAN}{BOLD}{model}{RESET}")];
     if !dir_short.is_empty() {
-        row1_parts.push(format!("{GRAY}{dir_short}{RESET}"));
+        if let Some(br) = branch {
+            row1_parts.push(format!("{GRAY}{dir_short}{RESET} {DIM}({br}){RESET}"));
+        } else {
+            row1_parts.push(format!("{GRAY}{dir_short}{RESET}"));
+        }
     }
     if !ctx_str.is_empty() {
         row1_parts.push(ctx_str);

@@ -9,6 +9,7 @@ An ultra-fast, zero-overhead custom statusline binary for [Google Antigravity](h
 - **Sub-Millisecond Execution (~1 ms):** Replaces heavy Python/Bash statusline scripts, eliminating CPU spikes during rapid terminal refreshes.
 - **Project-Specific Context:** Reads workspace directory, active model, and conversation context window usage directly from the active session payload. No cross-project collision or context leakage between terminals.
 - **Account-Wide Quota Sync:** Synchronizes 5-hour and Weekly Gemini/3P quota across all running `agy` sessions via `/dev/shm` IPC with safe file-locking (`flock`). When any project consumes tokens or receives quota updates, all active terminals reflect the true account state.
+- **In-Process Git Resolution:** Detects the active Git branch and detached HEAD states directly in-process from `.git/HEAD` without spawning external `git` commands.
 - **Live Reset Countdowns:** Automatically computes real-time countdowns to quota resets (`XhYm`, `XdYh`).
 - **ANSI Colored Output:** Intuitive green/yellow/red color thresholds for both token consumption and remaining quota.
 
