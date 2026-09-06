@@ -2,7 +2,7 @@
 
 An ultra-fast, zero-overhead custom statusline binary for [Google Antigravity](https://github.com/google) CLI (`agy`), written in Rust.
 
-![agy-statusline preview](screenshot.png)
+![agy-statusline preview](assets/statusline.png)
 
 ## Highlights
 
